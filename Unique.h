@@ -10,8 +10,8 @@ namespace sp {
 
     // Suppression
     ~Unique() {
-      if(my_ptr){
-        delete my_ptr
+      if(m_unique_ptr){
+        delete m_unique_ptr;
       }
     }
 
@@ -27,7 +27,7 @@ namespace sp {
 
     // Surchage opérateur =. Copie par déplacement
     Unique& operator=(Unique&& other){ // Other est temporaire donc pas de problème il sera supprimé
-      std::swap(m_unique_ptr, other.m_unique_ptr)
+      std::swap(m_unique_ptr, other.m_unique_ptr);
       return *this;
     }
 
@@ -46,7 +46,7 @@ namespace sp {
     }
 
     bool exists() const {
-      return m_unique_ptr != nullptr
+      return m_unique_ptr != nullptr;
     }
 
   private:
