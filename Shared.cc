@@ -1,5 +1,5 @@
 #include "Shared.h"
 
-int main () {
-    return 0;
+namespace sp {
+  // Implementation defined
 }
