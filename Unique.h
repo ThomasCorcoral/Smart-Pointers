@@ -18,19 +18,16 @@ namespace sp {
     // Constructeur par copie (Donc interdit)
     Unique(const Unique<T>& other) = delete;
 
-    // Constructeur par déplacement
+    // Constructeur par déplacement. Plus opti car pas d'allocation mémoire aléatoire
     Unique(Unique&& other):m_unique_ptr(std::exchange(other.m_unique_ptr, nullptr)){ // && objet temporaire
     }
 
     // Suppression opérateur =
     Unique& operator=(const Unique& other) = delete;
 
-    // Surchage opérateur = copie par déplacement
-    Unique& operator=(Unique&& other):m_unique_ptr(delete){
-      /*if(m_unique_ptr){
-        delete m_unique_ptr;
-      }*/
-      m_unique_ptr = std::exchange(other.m_unique_ptr, nullptr);
+    // Surchage opérateur =. Copie par déplacement
+    Unique& operator=(Unique&& other){ // Other est temporaire donc pas de problème il sera supprimé
+      std::swap(m_unique_ptr, other.m_unique_ptr)
       return *this;
     }
 
