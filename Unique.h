@@ -5,8 +5,7 @@ namespace sp {
   template<typename T>
   class Unique {
   public:
-    Unique(T* ptr = nullptr){
-    }
+    Unique(T* ptr = nullptr):m_unique_ptr(ptr){}
 
     // Suppression
     ~Unique() {
