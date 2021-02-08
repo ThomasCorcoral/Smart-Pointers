@@ -35,7 +35,11 @@ namespace sp {
     /**
      * @brief Copy constructor
      */
-    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr), number_ptr(other.number_ptr), number_ptr((other.m_shared_ptr != nullptr) ? (*this->number_ptr)++ : (*this->number_ptr)){}
+    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr), number_ptr(other.number_ptr){
+      if(other.m_shared_ptr != nullptr){
+        (*this->number_ptr)++;
+      }
+    }
 
     /**
      * @brief Move constructor
