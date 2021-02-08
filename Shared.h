@@ -16,48 +16,50 @@ namespace sp {
     /**
      * @brief Constructor takes a dynamic pointer
      */
-    Shared(T* ptr = nullptr):m_shared_ptr(ptr){
-      number_ptr = 0;
-    }
+    Shared(T* ptr = nullptr):m_shared_ptr(ptr),number_ptr((ptr != nullptr) ? new int(1) : nullptr){}
 
     /**
      * @brief Destructor
      */
     ~Shared() {
       // Tell other pointers that this one has been delete and check if object need to be free
-      number_ptr--;
       if(m_shared_ptr){
-        delete m_shared_ptr;
+        (*this->number_ptr)--; 
+        if((*this->number_ptr) == 0){
+          delete m_shared_ptr;
+          delete number_ptr;
+        }
       }
     }
 
     /**
      * @brief Copy constructor
      */
-    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr) {
-      other->number_ptr += 1;
-      number_ptr = other.number_ptr;
-    }
+    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr), number_ptr(other.number_ptr), number_ptr((other.m_shared_ptr != nullptr) ? (*this->number_ptr)++ : (*this->number_ptr)){}
 
     /**
      * @brief Move constructor
      */
-    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)){
-      number_ptr = other.number_ptr;
-    }
+    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)), number_ptr(other.number_ptr){}
 
     /**
      * @brief Copy assignment
      */
-    Shared& operator=(const Shared& other) {
+    Shared& operator=(const Shared& other){
+      m_shared_ptr = other.m_shared_ptr;
+      number_ptr = other.number_ptr;
+      if (nullptr != other.m_shared_ptr){
+          (*this->number_ptr)++; 
+      }
       return *this;
     }
 
     /**
      * @brief Move assignment
      */
-    Shared& operator=(Shared&& other) {
-      return *this;
+    Shared& operator=(Shared&& other){
+      m_shared_ptr = std::exchange(other.m_shared_ptr, nullptr);
+      number_ptr = other.number_ptr;
     }
 
     /**
@@ -71,7 +73,7 @@ namespace sp {
      * @brief Get a reference on pointed data
      */
     T& operator*() {
-      return T();
+      return *this->m_shared_ptr;
     }
 
     /**
@@ -85,7 +87,7 @@ namespace sp {
      * @brief Get the reference number on raw data
      */
     std::size_t count() const {
-      return number_ptr;
+      return *number_ptr;
     }
 
     /**
@@ -100,7 +102,7 @@ namespace sp {
   private:
     // implementation defined
     T *m_shared_ptr;
-    int number_ptr;
+    int *number_ptr;
   };
 }
 

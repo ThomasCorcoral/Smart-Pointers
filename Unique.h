@@ -36,12 +36,12 @@ namespace sp {
 
     // Surcharge opérateur *
     T& operator*() {
-      return T();
+      return *m_unique_ptr;
     }
 
     // Surcharge opérateur ->
     T* operator->() {
-      return nullptr;
+      return m_unique_ptr;
     }
 
     bool exists() const {
