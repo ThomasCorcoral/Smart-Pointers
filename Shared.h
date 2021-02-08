@@ -44,7 +44,7 @@ namespace sp {
     /**
      * @brief Move constructor
      */
-    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)), number_ptr(other.number_ptr){}
+    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, m_shared_ptr)), number_ptr(other.number_ptr){}
 
     /**
      * @brief Copy assignment
@@ -62,7 +62,7 @@ namespace sp {
      * @brief Move assignment
      */
     Shared& operator=(Shared&& other){
-      m_shared_ptr = std::exchange(other.m_shared_ptr, nullptr);
+      m_shared_ptr = std::exchange(other.m_shared_ptr, m_shared_ptr);
       number_ptr = other.number_ptr;
     }
 
