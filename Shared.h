@@ -16,7 +16,7 @@ namespace sp {
     /**
      * @brief Constructor takes a dynamic pointer
      */
-    Shared(T* ptr = nullptr):m_shared_ptr(ptr),number_ptr((ptr != nullptr) ? new int(1) : nullptr){}
+    Shared(T* ptr = nullptr):m_shared_ptr(ptr),m_number_ptr((ptr != nullptr) ? new int(1) : nullptr), m_cnt_weak((ptr != nullptr) ? new int(0) : nullptr){}
 
     /**
      * @brief Destructor
@@ -24,10 +24,13 @@ namespace sp {
     ~Shared() {
       // Tell other pointers that this one has been delete and check if object need to be free
       if(m_shared_ptr){
-        (*this->number_ptr)--; 
-        if((*this->number_ptr) == 0){
+        (*this->m_number_ptr)--;
+        if((*this->m_number_ptr) == 0){
+          if((*this->m_cnt_weak) == 0){
+            delete m_cnt_weak;
+            delete m_number_ptr;
+          }
           delete m_shared_ptr;
-          delete number_ptr;
         }
       }
     }
@@ -35,25 +38,26 @@ namespace sp {
     /**
      * @brief Copy constructor
      */
-    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr), number_ptr(other.number_ptr){
+    Shared(const Shared<T>& other):m_shared_ptr(other.m_shared_ptr), m_number_ptr(other.m_number_ptr), m_cnt_weak(other.m_cnt_weak){
       if(other.m_shared_ptr != nullptr){
-        (*this->number_ptr)++;
+        (*this->m_number_ptr)++;
       }
     }
 
     /**
-     * @brief Move constructor
+     * @brief Move constructor (IS LAST GOOD ?)
      */
-    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)), number_ptr(std::exchange(other.number_ptr, nullptr)){}
+    Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)), m_number_ptr(std::exchange(other.m_number_ptr, nullptr)), m_cnt_weak(std::exchange(other.m_cnt_weak, nullptr)){}
 
     /**
      * @brief Copy assignment
      */
     Shared& operator=(const Shared& other){
       m_shared_ptr = other.m_shared_ptr;
-      number_ptr = other.number_ptr;
-      if (nullptr != other.m_shared_ptr){
-          (*this->number_ptr)++; 
+      m_number_ptr = other.m_number_ptr;
+      m_cnt_weak = other.m_cnt_weak;
+      if (other.m_shared_ptr != nullptr){
+          (*this->m_number_ptr)++; 
       }
       return *this;
     }
@@ -63,7 +67,9 @@ namespace sp {
      */
     Shared& operator=(Shared&& other){
       std::swap(other.m_shared_ptr, m_shared_ptr);
-      std::swap(other.number_ptr, number_ptr);
+      std::swap(other.m_number_ptr, m_number_ptr);
+      std::swap(other.m_cnt_weak, m_cnt_weak);
+      return *this;
     }
 
     /**
@@ -91,7 +97,7 @@ namespace sp {
      * @brief Get the reference number on raw data
      */
     std::size_t count() const {
-      return *number_ptr;
+      return *m_number_ptr;
     }
 
     /**
@@ -106,7 +112,8 @@ namespace sp {
   private:
     // implementation defined
     T *m_shared_ptr;
-    int *number_ptr;
+    int *m_number_ptr;
+    int *m_cnt_weak;
   };
 }
 
