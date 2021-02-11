@@ -117,7 +117,7 @@ TEST(WeakTests, DoubleCreation) {
   sp::Weak<int> weak2(shared);
 }
 
-TEST(WeakTests, Incrementation){
+TEST(WeakTests, Division){
   sp::Shared<int>shared(new int(42));
   EXPECT_EQ(*shared, 42);
   sp::Weak<int>weak1(shared);
@@ -130,8 +130,28 @@ TEST(WeakTests, Incrementation){
 TEST(WeakTests, Copy){
   sp::Shared<int> shared(new int(42));
   sp::Weak<int> weak(shared);
-  sp::Weak<int> weak2;
-  weak2 = weak;
+  sp::Weak<int> weak2 = weak;
+  auto tmp = weak.lock();
+  EXPECT_TRUE(tmp.exists());
+  auto tmp2 = weak2.lock();
+  EXPECT_TRUE(tmp.exists());
+  EXPECT_EQ(*tmp, *tmp2);
+}
+
+TEST(WeakTests, Displacement){
+  sp::Shared<int> shared(new int(42));
+  EXPECT_TRUE(shared.exists());
+  EXPECT_EQ(*shared, 42);
+  sp::Weak<int> weak = shared;
+  auto tmp = weak.lock();
+  EXPECT_FALSE(shared.exists());
+  EXPECT_TRUE(tmp.exists());
+  EXPECT_EQ(*tmp, 42);
+  sp::Weak<int> weak2 = std::move(weak);
+  auto tmp2 = weak2.lock();
+  EXPECT_FALSE(tmp.exists());
+  EXPECT_TRUE(tmp2.exists());
+  EXPECT_EQ(*tmp2, 42);
 }
 
 int main(int argc, char* argv[]) {
