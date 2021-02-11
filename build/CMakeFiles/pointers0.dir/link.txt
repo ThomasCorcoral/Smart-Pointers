@@ -1,0 +1,2 @@
+/usr/bin/ar qc libpointers0.a  CMakeFiles/pointers0.dir/Shared.cc.o
+/usr/bin/ranlib libpointers0.a

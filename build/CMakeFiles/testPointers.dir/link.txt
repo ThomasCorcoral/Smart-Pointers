@@ -1,0 +1,1 @@
+/usr/bin/c++    -fsanitize=address,undefined CMakeFiles/testPointers.dir/testPointers.cc.o  -o testPointers libpointers0.a libgoogletest1.a -lpthread 
