@@ -1,5 +1,0 @@
-/mnt/c/Users/Nelimix/Desktop/Tests_travail/S6/PMP/TP1/Smart-Pointers/build/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/Nelimix/Desktop/Tests_travail/S6/PMP/TP1/Smart-Pointers/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/Nelimix/Desktop/Tests_travail/S6/PMP/TP1/Smart-Pointers/build/CMakeFiles/testPointers.dir
-/mnt/c/Users/Nelimix/Desktop/Tests_travail/S6/PMP/TP1/Smart-Pointers/build/CMakeFiles/pointers0.dir
-/mnt/c/Users/Nelimix/Desktop/Tests_travail/S6/PMP/TP1/Smart-Pointers/build/CMakeFiles/googletest1.dir
