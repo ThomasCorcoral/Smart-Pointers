@@ -146,15 +146,26 @@ TEST(WeakTests, Displacement){
   sp::Weak<int> weak;
   weak = shared;
   auto tmp = weak.lock();
-  EXPECT_FALSE(shared.exists());
+  EXPECT_TRUE(shared.exists());
   EXPECT_TRUE(tmp.exists());
   EXPECT_EQ(*tmp, 42);
   sp::Weak<int> weak2;
   weak2 = std::move(weak);
   auto tmp2 = weak2.lock();
-  EXPECT_FALSE(tmp.exists());
+  EXPECT_TRUE(tmp.exists());
   EXPECT_TRUE(tmp2.exists());
   EXPECT_EQ(*tmp2, 42);
+}
+
+TEST(WeakTests, CopyInitialisation){
+  sp::Shared<int> shared(new int(42));
+  sp::Weak<int> weak(shared);
+  sp::Weak<int> weak2 = weak;
+  auto tmp = weak.lock();
+  EXPECT_TRUE(tmp.exists());
+  auto tmp2 = weak2.lock();
+  EXPECT_TRUE(tmp.exists());
+  EXPECT_EQ(*tmp, *tmp2);
 }
 
 int main(int argc, char* argv[]) {
