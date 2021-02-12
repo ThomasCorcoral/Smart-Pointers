@@ -94,11 +94,15 @@ namespace sp {
      */
     Shared<T> lock() {
       Shared<T> new_shared_ptr(m_ptr);
-      delete(new_shared_ptr.m_number_ptr);
-      delete(new_shared_ptr.m_cnt_weak);
-      new_shared_ptr.m_number_ptr = m_cnt_shared;
-      new_shared_ptr.m_cnt_weak = m_cnt_weak;
-      *m_cnt_shared +=1;
+      if(m_ptr != nullptr)
+      {
+        delete(new_shared_ptr.m_number_ptr);
+        delete(new_shared_ptr.m_cnt_weak);
+        new_shared_ptr.m_number_ptr = m_cnt_shared;
+        new_shared_ptr.m_cnt_weak = m_cnt_weak;
+        *m_cnt_shared +=1;
+      }
+
       return new_shared_ptr;
     }
 
