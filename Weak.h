@@ -19,7 +19,7 @@ namespace sp {
     /**
      * @brief Constructor takes a Shared pointer
      */
-    Weak(const Shared<T>& shared):m_ptr(shared.m_shared_ptr), m_cnt_shared(shared.m_number_ptr), m_cnt_weak(shared.m_cnt_weak){
+    Weak(const Shared<T>& shared):m_ptr(&shared), m_cnt_shared(shared.m_number_ptr), m_cnt_weak(shared.m_cnt_weak){
       *m_cnt_weak += 1;
     }
 
@@ -28,8 +28,7 @@ namespace sp {
      */
     ~Weak(){
       if(m_ptr){
-        *m_cnt_weak -= 1; // tell the shared that the weak is delete
-        // If no shared and no more weak, the destructor need to delete the weak counter
+        *m_cnt_weak -= 1;
         if((*this->m_cnt_shared) == 0 && (*this->m_cnt_weak) == 0){ 
           delete m_cnt_weak;
           delete m_cnt_shared;
@@ -76,7 +75,7 @@ namespace sp {
      * @brief Assignment from Shared
      */
     Weak& operator=(Shared<T>& shared) {
-      m_ptr = shared.m_shared_ptr;
+      m_ptr = &shared;
       m_cnt_weak = shared.m_cnt_weak;
       m_cnt_shared = shared.m_number_ptr;
       if(m_ptr){
@@ -90,25 +89,21 @@ namespace sp {
      *
      * If the raw pointer still exists, the method
      * initialize a Shared object. Otherwise, the method
-     * retrun a non existing Shared pointeur.
+     * return a non existing Shared pointeur.
      */
     Shared<T> lock() {
-      Shared<T> new_shared_ptr(m_ptr);
-      if(m_ptr != nullptr)
-      {
-        delete(new_shared_ptr.m_number_ptr);
-        delete(new_shared_ptr.m_cnt_weak);
-        new_shared_ptr.m_number_ptr = m_cnt_shared;
-        new_shared_ptr.m_cnt_weak = m_cnt_weak;
-        *m_cnt_shared +=1;
+      if(m_ptr){
+        if(m_ptr->m_shared_ptr != nullptr){
+          Shared<T> out = Shared<T>(*m_ptr);
+          return out;
+        }
       }
-
-      return new_shared_ptr;
+      return Shared<T>();
     }
 
   private:
     // implementation defined
-    T* m_ptr;
+    const Shared<T>* m_ptr;
     int* m_cnt_shared;
     int* m_cnt_weak;
   };

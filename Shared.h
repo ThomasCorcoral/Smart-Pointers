@@ -21,8 +21,7 @@ namespace sp {
     /**
      * @brief Destructor
      */
-    ~Shared() {
-      // Tell other pointers that this one has been delete and check if object need to be free
+    ~Shared(){
       if(m_shared_ptr){
         (*this->m_number_ptr)--;
         if((*this->m_number_ptr) == 0){
@@ -45,7 +44,7 @@ namespace sp {
     }
 
     /**
-     * @brief Move constructor (IS LAST GOOD ?)
+     * @brief Move constructor
      */
     Shared(Shared&& other):m_shared_ptr(std::exchange(other.m_shared_ptr, nullptr)), m_number_ptr(std::exchange(other.m_number_ptr, nullptr)), m_cnt_weak(std::exchange(other.m_cnt_weak, nullptr)){}
 
@@ -57,7 +56,7 @@ namespace sp {
       m_number_ptr = other.m_number_ptr;
       m_cnt_weak = other.m_cnt_weak;
       if (other.m_shared_ptr != nullptr){
-          (*this->m_number_ptr)++; 
+          (*this->m_number_ptr)++;
       }
       return *this;
     }

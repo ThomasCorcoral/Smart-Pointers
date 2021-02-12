@@ -189,32 +189,37 @@ TEST(WeakTests, AssignmentFromShared){
   EXPECT_TRUE(tmp.exists());
   weak1 = shared1;
   auto tmp1 = weak1.lock();
+  tmp1 = weak1.lock();
+  auto tmp2 = weak1.lock();
   EXPECT_TRUE(tmp1.exists());
   EXPECT_EQ(*tmp1, 24);
 }
 
-TEST(WeakTests, Test){
-  sp::Shared <int> shared(new int(42));
-  sp::Weak <int> weak1(shared);
-  {
-    auto tmp = weak1.lock ();
-    EXPECT_TRUE(tmp.exists());
-  }
-
-  shared = sp::Shared <int>(new int(1337));
-  sp::Weak <int> weak2(shared);
-  {
-    auto tmp = weak1.lock();
-    EXPECT_FALSE(tmp.exists());
-    tmp = weak2.lock();
-    EXPECT_EQ(*tmp, 1337);
-  }
-}
 
 TEST(WeakTests, Uninitialized){
   sp::Weak<int> weak;
   auto tmp = weak.lock();
   EXPECT_FALSE(tmp.exists());
+}
+
+TEST(WeakTests, DoubleFree){
+  sp::Shared<int>shared(new int(42));
+  EXPECT_EQ(*shared, 42);
+  sp::Weak<int>weak1(shared);
+  {
+    auto tmp = weak1.lock();
+    EXPECT_TRUE(tmp.exists());
+    (*tmp) /= 2;
+    EXPECT_EQ(*tmp, 21);
+  }
+  shared = sp::Shared<int>(new int (1337));
+  sp::Weak<int>weak2(shared);
+  {
+    auto tmp = weak1.lock();
+    EXPECT_TRUE(tmp.exists());
+    tmp = weak2.lock();
+    EXPECT_EQ(*tmp, 1337);
+  }
 }
 
 int main(int argc, char* argv[]) {
